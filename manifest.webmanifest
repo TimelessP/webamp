@@ -1,5 +1,5 @@
 {
-  "id": "./",
+  "id": "/webamp/",
   "name": "webamp — local audio player",
   "short_name": "webamp",
   "description": "A local-first music player for the browser.",
