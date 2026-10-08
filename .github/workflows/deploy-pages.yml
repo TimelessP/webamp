@@ -1,0 +1,43 @@
+name: Deploy webamp to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
+      - name: Prepare static site
+        env:
+          BUILD_ID: ${{ github.sha }}
+        run: |
+          mkdir _site
+          cp index.html manifest.webmanifest version.json icon.svg icon-192.png icon-512.png apple-touch-icon.png _site/
+          printf '{"commit":"%s"}\n' "${BUILD_ID}" > _site/version.json
+          sed "s/__BUILD_ID__/${BUILD_ID}/g" service-worker.js > _site/service-worker.js
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
