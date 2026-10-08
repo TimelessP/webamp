@@ -37,6 +37,7 @@ Webamp uses the native audio element for normal playback and registers Media Ses
 ## Keep These Invariants
 
 - Keep launch, scope, icon, and app-shell URLs relative so the PWA works at both localhost root and the GitHub Pages `/webamp/` project path. Keep the manifest `id` explicitly set to `/webamp/`; `./` resolves to the GitHub Pages origin root and can collide with other installed apps on `timelessp.github.io`.
+- During service-worker installation, fetch app-shell assets with a build-specific query before storing them under their stable URLs. This bypasses stale browser/CDN HTTP-cache entries so the manifest ID and version JSON match the new worker.
 - Add every required static shell asset to `APP_SHELL` in `service-worker.js` and copy it into `_site` in the Pages workflow.
 - Do not cache uploaded audio blobs in the Cache API; they belong in IndexedDB and must remain separate from app releases.
 - Preserve the update deferral while audio is active and the initial controller-claim handling in `registerPwa()`.

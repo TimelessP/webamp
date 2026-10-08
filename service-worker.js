@@ -15,7 +15,14 @@ const APP_SHELL = [
 self.addEventListener("install", (event) => {
   event.waitUntil((async () => {
     const cache = await caches.open(CACHE_NAME);
-    await cache.addAll(APP_SHELL);
+    await Promise.all(APP_SHELL.map(async (path) => {
+      const url = new URL(path, self.registration.scope);
+      const freshUrl = new URL(url.href);
+      freshUrl.searchParams.set("webamp-build", BUILD_ID);
+      const response = await fetch(freshUrl, { cache: "reload" });
+      if (!response.ok) throw new Error(`Could not precache ${path}: ${response.status}`);
+      await cache.put(url, response);
+    }));
     await self.skipWaiting();
   })());
 });
