@@ -4,6 +4,7 @@ const CACHE_NAME = `${CACHE_PREFIX}${BUILD_ID}`;
 const APP_SHELL = [
   "./",
   "./index.html",
+  "./webampdeluxe.html",
   "./manifest.webmanifest",
   "./version.json",
   "./icon.svg",
